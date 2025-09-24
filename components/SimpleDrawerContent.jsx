@@ -25,7 +25,7 @@ import Animated, {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Animated Drawer Item Component
-function AnimatedDrawerItem({ label, icon: Icon, onPress, index, isOpen }) {
+function AnimatedDrawerItem({ label, icon: Icon, onPress, index, isOpen, isActive }) {
   const animatedValue = useSharedValue(0);
   const pressValue = useSharedValue(1);
 
@@ -86,6 +86,11 @@ function AnimatedDrawerItem({ label, icon: Icon, onPress, index, isOpen }) {
     };
   });
 
+  const iconColor = isActive ? '#111' : '#b5ff00';
+  const backgroundColor = isActive ? '#b5ff00' : 'rgba(181, 255, 0, 0.05)';
+  const textColor = isActive ? '#111' : '#fff';
+  const borderLeftColor = isActive ? '#74a100ff' : '#b5ff00';
+
   return (
     <Animated.View style={[animatedStyle, { marginVertical: 4 }]}>
       <Pressable
@@ -99,9 +104,9 @@ function AnimatedDrawerItem({ label, icon: Icon, onPress, index, isOpen }) {
           paddingVertical: 16,
           paddingHorizontal: 20,
           borderRadius: 15,
-          backgroundColor: "rgba(181, 255, 0, 0.05)",
+          backgroundColor: backgroundColor,
           borderLeftWidth: 4,
-          borderLeftColor: "#b5ff00",
+          borderLeftColor: borderLeftColor,
           marginHorizontal: 8,
           shadowColor: "#b5ff00",
           shadowOffset: { width: 0, height: 2 },
@@ -111,11 +116,11 @@ function AnimatedDrawerItem({ label, icon: Icon, onPress, index, isOpen }) {
         }}
       >
         <View style={{ marginRight: 16, opacity: 0.9 }}>
-          <Icon color="#b5ff00" size={24} />
+          <Icon color={iconColor} size={24} />
         </View>
         <Text
           style={{
-            color: "#fff",
+            color: textColor,
             fontSize: 17,
             fontWeight: "600",
             letterSpacing: 0.5,
@@ -287,47 +292,56 @@ export default function SimpleDrawerContent(props) {
   const drawerStatus = useDrawerStatus();
   const isOpen = drawerStatus === "open";
 
+  const activeDrawerRoute = props.state.routes[props.state.index];
+  let activeRouteName = activeDrawerRoute.name;
+
+  if (activeDrawerRoute.state) {
+    const nestedState = activeDrawerRoute.state;
+    activeRouteName = nestedState.routes[nestedState.index].name;
+  }
+
   const menuItems = [
     {
+      name: "index",
       label: "Home",
       icon: Home,
-      action: () => props.navigation.navigate("(tabs)"),
-    },
-    {
-      label: "RPI",
-      icon: School,
-      action: () => props.navigation.navigate("rpi"),
-    },
-    {
-      label: "BTEB",
-      icon: Book,
       action: () =>
-        props.navigation.navigate("webview", { url: "https://bteb.gov.bd/" }),
-    },
-    {
-      label: "Admission",
-      icon: ClipboardPen,
-      action: () =>
-        props.navigation.navigate("webview", {
-          url: "http://btebadmission.gov.bd/website/",
+        props.navigation.navigate("(tabs)", {
+          screen: "index",
         }),
     },
     {
+      name: "bteb",
+      label: "BTEB",
+      icon: Book,
+      action: () => props.navigation.navigate("(tabs)", { screen: "bteb" }),
+    },
+    {
+      name: "admission",
+      label: "Admission",
+      icon: ClipboardPen,
+      action: () => props.navigation.navigate("(tabs)", { screen: "admission" }),
+    },
+    {
+      name: "questions",
       label: "Questions",
       icon: FileQuestion,
       action: () => props.navigation.navigate("questions"),
     },
     {
+      name: "results",
       label: "Results",
       icon: GraduationCap,
       action: () => props.navigation.navigate("results"),
     },
     {
+      name: "about",
       label: "About",
       icon: Info,
       action: () => props.navigation.navigate("about"),
     },
     {
+      name: "privacy-policy",
       label: "Privacy Policy",
       icon: Shield,
       action: () => props.navigation.navigate("privacy-policy"),
@@ -353,6 +367,7 @@ export default function SimpleDrawerContent(props) {
               onPress={item.action}
               index={index}
               isOpen={isOpen}
+              isActive={item.name === activeRouteName}
             />
           ))}
         </View>

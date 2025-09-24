@@ -38,6 +38,18 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="book.fill" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="bteb"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="admission"
+        options={{
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

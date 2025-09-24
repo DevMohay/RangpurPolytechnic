@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
+import { DrawerActions, useNavigation } from "@react-navigation/native";
+import { Equal, RefreshCw } from "lucide-react-native";
+import { useEffect, useState } from "react";
 import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
   Alert,
   Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import {
   GestureHandlerRootView,
   PanGestureHandler,
 } from "react-native-gesture-handler";
-import { useNavigation, DrawerActions } from "@react-navigation/native";
-import { Equal, RefreshCw, GraduationCap } from "lucide-react-native";
 
 const { width } = Dimensions.get("window");
 const normalizeFontSize = (size) => {
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#99cc00",
     borderRadius: 6,
     width: 40,
-    height: 20,
+    height: 25,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -352,8 +352,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#99cc00",
     borderRadius: 6,
     paddingHorizontal: 6,
-    paddingVertical: 4,
-    height: 20,
+    paddingVertical: 0,
+    height: 25,
     alignItems: "center",
     justifyContent: "center",
   },

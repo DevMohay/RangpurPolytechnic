@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Drawer } from 'expo-router/drawer';
 import { StatusBar } from 'expo-status-bar';
-import { Book, ClipboardPen, FileQuestion, GraduationCap, Home, Info, School, Shield } from 'lucide-react-native';
+import { Book, ClipboardPen, FileQuestion, GraduationCap, Home, Info, School, Shield, UserCheck } from 'lucide-react-native';
 import { Image } from 'react-native';
 
 import SimpleDrawerContent from '@/components/SimpleDrawerContent';
@@ -42,30 +42,6 @@ export default function RootLayout() {
           }}
         />
         <Drawer.Screen
-          name="rpi"
-          options={{
-            drawerLabel: 'RPI',
-            title: 'RPI',
-            drawerIcon: ({ color, size }) => <School color={color} size={size} />,
-          }}
-        />
-        <Drawer.Screen
-          name="bteb"
-          options={{
-            drawerLabel: 'BTEB',
-            title: 'BTEB',
-            drawerIcon: ({ color, size }) => <Book color={color} size={size} />,
-          }}
-        />
-        <Drawer.Screen
-          name="admission"
-          options={{
-            drawerLabel: 'Admission',
-            title: 'Admission',
-            drawerIcon: ({ color, size }) => <ClipboardPen color={color} size={size} />,
-          }}
-        />
-        <Drawer.Screen
           name="questions"
           options={{
             drawerLabel: 'Questions',
@@ -95,14 +71,6 @@ export default function RootLayout() {
             drawerLabel: 'Privacy Policy',
             title: 'Privacy Policy',
             drawerIcon: ({ color, size }) => <Shield color={color} size={size} />,
-          }}
-        />
-        <Drawer.Screen
-          name="webview"
-          options={{
-            drawerLabel: 'WebView',
-            title: 'WebView',
-            drawerIcon: ({ color, size }) => <Book color={color} size={size} />,
           }}
         />
       </Drawer>
