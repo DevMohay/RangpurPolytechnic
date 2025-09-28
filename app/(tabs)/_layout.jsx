@@ -41,13 +41,17 @@ export default function TabLayout() {
       <Tabs.Screen
         name="bteb"
         options={{
-          href: null,
+          href: null, // Hidden from tab bar
+          title: 'BTEB',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="doc.text.fill" color={color} />,
         }}
       />
       <Tabs.Screen
         name="admission"
         options={{
-          href: null,
+          href: null, // Hidden from tab bar  
+          title: 'Admission',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="graduationcap.circle.fill" color={color} />,
         }}
       />
     </Tabs>

@@ -1,11 +1,14 @@
-import { ArrowLeft } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import { ArrowLeft, Scroll } from "lucide-react-native";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   TouchableOpacity,
   FlatList,
   StyleSheet,
   BackHandler,
+  Animated,
+  Easing,
+  ScrollView,
 } from "react-native";
 import SwipeToOpenDrawer from "@/components/SwipeToOpenDrawer";
 import { ThemedText } from "@/components/themed-text";
@@ -15,6 +18,175 @@ import TechnologyComponent from "@/components/TechnologyComponent.jsx";
 export default function BooksScreen() {
   const [selectedProbidhan, setSelectedProbidhan] = useState(null);
   const [selectedTechnology, setSelectedTechnology] = useState(null);
+  const [animatingItems, setAnimatingItems] = useState({});
+  const animationRefs = useRef({});
+  const probidhanScaleRefs = useRef({});
+
+  // Initialize animation values for items
+  const initializeAnimation = (probidhanId, technologies) => {
+    if (!animationRefs.current[probidhanId]) {
+      animationRefs.current[probidhanId] = technologies.map(() => ({
+        scale: new Animated.Value(0),
+        opacity: new Animated.Value(0),
+        translateY: new Animated.Value(30),
+      }));
+    }
+  };
+
+  // Animate items in one by one with zoom bounce effect
+  const animateItemsIn = (probidhanId, technologies) => {
+    const animations = animationRefs.current[probidhanId];
+    if (!animations) return;
+
+    setAnimatingItems(prev => ({ ...prev, [probidhanId]: true }));
+
+    // Reset all values
+    animations.forEach(anim => {
+      anim.scale.setValue(0);
+      anim.opacity.setValue(0);
+      anim.translateY.setValue(30);
+    });
+
+    // Animate each item with staggered delay
+    const animationPromises = animations.map((anim, index) => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          Animated.parallel([
+            Animated.spring(anim.scale, {
+              toValue: 1,
+              tension: 100,
+              friction: 8,
+              useNativeDriver: true,
+            }),
+            Animated.timing(anim.opacity, {
+              toValue: 1,
+              duration: 300,
+              easing: Easing.out(Easing.quad),
+              useNativeDriver: true,
+            }),
+            Animated.spring(anim.translateY, {
+              toValue: 0,
+              tension: 100,
+              friction: 8,
+              useNativeDriver: true,
+            }),
+          ]).start(() => resolve());
+        }, index * 100); // 100ms delay between each item
+      });
+    });
+
+    Promise.all(animationPromises).then(() => {
+      setAnimatingItems(prev => ({ ...prev, [probidhanId]: false }));
+    });
+  };
+
+  // Animate items out with reverse effect
+  const animateItemsOut = (probidhanId) => {
+    const animations = animationRefs.current[probidhanId];
+    if (!animations) return Promise.resolve();
+
+    return new Promise(resolve => {
+      setAnimatingItems(prev => ({ ...prev, [probidhanId]: true }));
+      
+      const animationPromises = animations.reverse().map((anim, index) => {
+        return new Promise(itemResolve => {
+          setTimeout(() => {
+            Animated.parallel([
+              Animated.timing(anim.scale, {
+                toValue: 0,
+                duration: 200,
+                easing: Easing.in(Easing.quad),
+                useNativeDriver: true,
+              }),
+              Animated.timing(anim.opacity, {
+                toValue: 0,
+                duration: 200,
+                useNativeDriver: true,
+              }),
+              Animated.timing(anim.translateY, {
+                toValue: -20,
+                duration: 200,
+                easing: Easing.in(Easing.quad),
+                useNativeDriver: true,
+              }),
+            ]).start(() => itemResolve());
+          }, index * 50); // 50ms delay between each item (faster for closing)
+        });
+      });
+
+      Promise.all(animationPromises).then(() => {
+        setAnimatingItems(prev => ({ ...prev, [probidhanId]: false }));
+        animations.reverse(); // Restore original order
+        resolve();
+      });
+    });
+  };
+
+  // Initialize probidhan scale animation
+  const initializeProbidhanScale = (probidhanId) => {
+    if (!probidhanScaleRefs.current[probidhanId]) {
+      probidhanScaleRefs.current[probidhanId] = new Animated.Value(1);
+    }
+  };
+
+  // Probidhan bounce animation
+  const animateProbidhanBounce = (probidhanId) => {
+    const scaleRef = probidhanScaleRefs.current[probidhanId];
+    if (!scaleRef) return;
+
+    Animated.sequence([
+      Animated.spring(scaleRef, {
+        toValue: 0.95,
+        tension: 300,
+        friction: 10,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleRef, {
+        toValue: 1,
+        tension: 300,
+        friction: 10,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  // Animated Technology Item Component
+  const AnimatedTechnologyItem = ({ item, index, probidhanId }) => {
+    const animations = animationRefs.current[probidhanId]?.[index] || {
+      scale: new Animated.Value(0),
+      opacity: new Animated.Value(0),
+      translateY: new Animated.Value(30),
+    };
+
+    return (
+      <Animated.View
+        style={[
+          styles.technologyItem,
+          {
+            transform: [
+              { scale: animations.scale },
+              { translateY: animations.translateY },
+            ],
+            opacity: animations.opacity,
+          },
+        ]}
+      >
+        <TouchableOpacity
+          style={styles.technologyTouchable}
+          onPress={() => setSelectedTechnology(item)}
+          activeOpacity={0.7}
+        >
+          <ThemedText style={styles.technologyText}>
+            {item}
+          </ThemedText>
+          {/* Add a cool icon */}
+          <View style={styles.technologyIcon}>
+            <ThemedText style={styles.iconText}>📚</ThemedText>
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
 
   const probidhanOptions = [
     {
@@ -87,39 +259,71 @@ export default function BooksScreen() {
             />
           </View>
         ) : (
-          probidhanOptions.map((probidhan) => (
-            <View key={probidhan.id}>
-              <TouchableOpacity
-                style={styles.probidhanItem}
-                onPress={() =>
-                  setSelectedProbidhan(
-                    selectedProbidhan === probidhan.id ? null : probidhan.id
-                  )
-                }
-              >
-                <ThemedText type="title" style={styles.probidhanText}>
-                  {probidhan.title}
-                </ThemedText>
-              </TouchableOpacity>
-
-              {selectedProbidhan === probidhan.id && (
-                <FlatList
-                  data={probidhan.technologies}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({ item }) => (
+          <ScrollView 
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 20 }}
+          >
+            {probidhanOptions.map((probidhan) => {
+              // Initialize scale animation for this probidhan
+              initializeProbidhanScale(probidhan.id);
+              const scaleRef = probidhanScaleRefs.current[probidhan.id];
+              
+              return (
+                <View key={probidhan.id}>
+                  <Animated.View
+                    style={[{
+                      transform: [{ scale: scaleRef || 1 }]
+                    }]}
+                  >
                     <TouchableOpacity
-                      style={styles.technologyItem}
-                      onPress={() => setSelectedTechnology(item)}
+                      style={styles.probidhanItem}
+                      onPress={async () => {
+                        // Add bounce animation
+                        animateProbidhanBounce(probidhan.id);
+                        
+                        if (selectedProbidhan === probidhan.id) {
+                          // Closing - animate out then clear selection
+                          await animateItemsOut(probidhan.id);
+                          setSelectedProbidhan(null);
+                        } else {
+                          // Opening - set selection first, then animate in
+                          if (selectedProbidhan) {
+                            await animateItemsOut(selectedProbidhan);
+                          }
+                          setSelectedProbidhan(probidhan.id);
+                          initializeAnimation(probidhan.id, probidhan.technologies);
+                          setTimeout(() => {
+                            animateItemsIn(probidhan.id, probidhan.technologies);
+                          }, 50);
+                        }
+                      }}
                     >
-                      <ThemedText style={styles.technologyText}>
-                        {item}
+                      <ThemedText type="title" style={styles.probidhanText}>
+                        {probidhan.title}
+                      </ThemedText>
+                      {/* Add expand/collapse indicator */}
+                      <ThemedText style={styles.expandIcon}>
+                        {selectedProbidhan === probidhan.id ? '▲' : '▼'}
                       </ThemedText>
                     </TouchableOpacity>
+                  </Animated.View>
+
+                  {selectedProbidhan === probidhan.id && (
+                    <View style={styles.technologiesContainer}>
+                      {probidhan.technologies.map((item, index) => (
+                        <AnimatedTechnologyItem
+                          key={`${probidhan.id}-${index}`}
+                          item={item}
+                          index={index}
+                          probidhanId={probidhan.id}
+                        />
+                      ))}
+                    </View>
                   )}
-                />
-              )}
-            </View>
-          ))
+                </View>
+              );
+            })}
+          </ScrollView>
         )}
       </ThemedView>
     </SwipeToOpenDrawer>
@@ -149,6 +353,7 @@ const styles = StyleSheet.create({
   probidhanItem: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 15,
@@ -159,9 +364,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     shadowColor: "#b5ff00",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 3,
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
   probidhanText: {
     fontSize: 18,
@@ -169,25 +374,51 @@ const styles = StyleSheet.create({
     color: "white",
     flex: 1,
   },
+  expandIcon: {
+    fontSize: 16,
+    color: "#b5ff00",
+    fontWeight: "bold",
+    marginLeft: 10,
+  },
+  technologiesContainer: {
+    paddingVertical: 8,
+  },
   technologyItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+    marginHorizontal: 8,
+    marginVertical: 4,
     borderRadius: 15,
     backgroundColor: "#29490bff",
     borderLeftWidth: 4,
     borderLeftColor: "white",
-    marginHorizontal: 8,
-    marginVertical: 4,
     shadowColor: "#b5ff00",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 3,
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+    overflow: "hidden",
+  },
+  technologyTouchable: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
   },
   technologyText: {
     fontSize: 16,
     color: "white",
+    fontWeight: "600",
+    flex: 1,
+  },
+  technologyIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(181, 255, 0, 0.2)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconText: {
+    fontSize: 16,
   },
 });

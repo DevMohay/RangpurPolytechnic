@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
+  Animated,
+  Easing,
 } from "react-native";
 import { captureRef } from "react-native-view-shot";
 import * as MediaLibrary from 'expo-media-library';
@@ -24,6 +26,12 @@ export default function ResultsScreen() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const viewRef = useRef();
+  
+  // Animation refs and state
+  const semesterAnimations = useRef([]);
+  const saveButtonScale = useRef(new Animated.Value(1)).current;
+  const cgpaScale = useRef(new Animated.Value(0)).current;
+  const passFailScale = useRef(new Animated.Value(0)).current;
 
   const checkResult = async () => {
     if (!roll) return;
