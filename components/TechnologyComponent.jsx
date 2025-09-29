@@ -180,7 +180,7 @@ const TechnologyComponent = ({ techName, selectedProbidhan, onBack }) => {
         visible={isVisible}
         onRequestClose={() => setIsVisible(false)}
         animationType="fade"
-        backgroundColor="#b5ff00"
+        backgroundColor="#111"
         swipeToCloseEnabled={true}
         doubleTapToZoomEnabled={true}
         presentationStyle="overFullScreen"
@@ -190,7 +190,7 @@ const TechnologyComponent = ({ techName, selectedProbidhan, onBack }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#b5ff00' },
+  container: { flex: 1, backgroundColor: '#111' },
   scrollView: { alignItems: 'center', flexGrow: 1, paddingVertical: 10 },
   imageContainer: {
     position: 'relative',
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     elevation: 5,
-    shadowColor: '#b5ff00',
+    shadowColor: '#111',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   fullImage: { 
     width: width * 0.9, 
     height: 300,
-    backgroundColor: '#b5ff00',
+    backgroundColor: '#111',
   },
   imageOverlay: {
     position: 'absolute',
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   imageNumber: {
-    color: '#000',
+    color: '#111',
     fontSize: 12,
     fontWeight: 'bold',
   },

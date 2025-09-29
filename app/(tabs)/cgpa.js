@@ -237,13 +237,13 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     paddingBottom: 40,
-    backgroundColor: "#b5ff00",
+    backgroundColor: "#111",
     alignItems: "center",
     flexGrow: 1,
   },
   mainBox: {
     width: "98%",
-    backgroundColor: "#111",
+    backgroundColor: "#b5ff00",
     padding: 15,
     borderRadius: 20,
   },
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: normalizeFontSize(24),
-    color: "#fff",
+    color: "#111",
     fontWeight: "bold",
   },
   buttonRow: {
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     fontSize: normalizeFontSize(18),
   },
   activeButtonText: {
-    color: "#fff",
+    color: "#111",
     fontWeight: "bold",
   },
   divider: {
@@ -298,8 +298,8 @@ const styles = StyleSheet.create({
   label: {
     fontSize: normalizeFontSize(14),
     fontWeight: "600",
-    color: "#111",
-    backgroundColor: "#b5ff00",
+    color: "#fff",
+    backgroundColor: "#111",
     width: "50%",
     height: 38,
     textAlign: "center",
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
   resetButton: {
     flexDirection: "row",
     gap: 5,
-    backgroundColor: "#99cc00",
+    backgroundColor: "red",
     borderRadius: 6,
     paddingHorizontal: 6,
     paddingVertical: 0,

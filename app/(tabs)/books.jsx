@@ -38,10 +38,10 @@ export default function BooksScreen() {
     const animations = animationRefs.current[probidhanId];
     if (!animations) return;
 
-    setAnimatingItems(prev => ({ ...prev, [probidhanId]: true }));
+    setAnimatingItems((prev) => ({ ...prev, [probidhanId]: true }));
 
     // Reset all values
-    animations.forEach(anim => {
+    animations.forEach((anim) => {
       anim.scale.setValue(0);
       anim.opacity.setValue(0);
       anim.translateY.setValue(30);
@@ -49,7 +49,7 @@ export default function BooksScreen() {
 
     // Animate each item with staggered delay
     const animationPromises = animations.map((anim, index) => {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         setTimeout(() => {
           Animated.parallel([
             Animated.spring(anim.scale, {
@@ -76,7 +76,7 @@ export default function BooksScreen() {
     });
 
     Promise.all(animationPromises).then(() => {
-      setAnimatingItems(prev => ({ ...prev, [probidhanId]: false }));
+      setAnimatingItems((prev) => ({ ...prev, [probidhanId]: false }));
     });
   };
 
@@ -85,11 +85,11 @@ export default function BooksScreen() {
     const animations = animationRefs.current[probidhanId];
     if (!animations) return Promise.resolve();
 
-    return new Promise(resolve => {
-      setAnimatingItems(prev => ({ ...prev, [probidhanId]: true }));
-      
+    return new Promise((resolve) => {
+      setAnimatingItems((prev) => ({ ...prev, [probidhanId]: true }));
+
       const animationPromises = animations.reverse().map((anim, index) => {
-        return new Promise(itemResolve => {
+        return new Promise((itemResolve) => {
           setTimeout(() => {
             Animated.parallel([
               Animated.timing(anim.scale, {
@@ -115,7 +115,7 @@ export default function BooksScreen() {
       });
 
       Promise.all(animationPromises).then(() => {
-        setAnimatingItems(prev => ({ ...prev, [probidhanId]: false }));
+        setAnimatingItems((prev) => ({ ...prev, [probidhanId]: false }));
         animations.reverse(); // Restore original order
         resolve();
       });
@@ -176,9 +176,7 @@ export default function BooksScreen() {
           onPress={() => setSelectedTechnology(item)}
           activeOpacity={0.7}
         >
-          <ThemedText style={styles.technologyText}>
-            {item}
-          </ThemedText>
+          <ThemedText style={styles.technologyText}>{item}</ThemedText>
           {/* Add a cool icon */}
           <View style={styles.technologyIcon}>
             <ThemedText style={styles.iconText}>📚</ThemedText>
@@ -226,7 +224,10 @@ export default function BooksScreen() {
       return false;
     };
 
-    const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackPress
+    );
 
     return () => {
       backHandler.remove();
@@ -244,11 +245,14 @@ export default function BooksScreen() {
                 onPress={() => setSelectedTechnology(null)}
                 style={styles.backButton}
               >
-                <ArrowLeft size={24} color="white" />
+                <ArrowLeft size={24} color="#111" />
+                <ThemedText
+                  type="title"
+                  style={{ color: "#111", fontSize: 18 }}
+                >
+                  {selectedTechnology}
+                </ThemedText>
               </TouchableOpacity>
-              <ThemedText type="title" style={styles.headerTitle}>
-                {selectedTechnology}
-              </ThemedText>
             </View>
 
             {/* Technology Details */}
@@ -259,7 +263,7 @@ export default function BooksScreen() {
             />
           </View>
         ) : (
-          <ScrollView 
+          <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 20 }}
           >
@@ -267,20 +271,22 @@ export default function BooksScreen() {
               // Initialize scale animation for this probidhan
               initializeProbidhanScale(probidhan.id);
               const scaleRef = probidhanScaleRefs.current[probidhan.id];
-              
+
               return (
                 <View key={probidhan.id}>
                   <Animated.View
-                    style={[{
-                      transform: [{ scale: scaleRef || 1 }]
-                    }]}
+                    style={[
+                      {
+                        transform: [{ scale: scaleRef || 1 }],
+                      },
+                    ]}
                   >
                     <TouchableOpacity
                       style={styles.probidhanItem}
                       onPress={async () => {
                         // Add bounce animation
                         animateProbidhanBounce(probidhan.id);
-                        
+
                         if (selectedProbidhan === probidhan.id) {
                           // Closing - animate out then clear selection
                           await animateItemsOut(probidhan.id);
@@ -291,9 +297,15 @@ export default function BooksScreen() {
                             await animateItemsOut(selectedProbidhan);
                           }
                           setSelectedProbidhan(probidhan.id);
-                          initializeAnimation(probidhan.id, probidhan.technologies);
+                          initializeAnimation(
+                            probidhan.id,
+                            probidhan.technologies
+                          );
                           setTimeout(() => {
-                            animateItemsIn(probidhan.id, probidhan.technologies);
+                            animateItemsIn(
+                              probidhan.id,
+                              probidhan.technologies
+                            );
                           }, 50);
                         }
                       }}
@@ -303,7 +315,7 @@ export default function BooksScreen() {
                       </ThemedText>
                       {/* Add expand/collapse indicator */}
                       <ThemedText style={styles.expandIcon}>
-                        {selectedProbidhan === probidhan.id ? '▲' : '▼'}
+                        {selectedProbidhan === probidhan.id ? "▲" : "▼"}
                       </ThemedText>
                     </TouchableOpacity>
                   </Animated.View>
@@ -334,7 +346,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#b5ff00",
+    backgroundColor: "#111",
   },
   header: {
     flexDirection: "row",
@@ -343,30 +355,37 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 8,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-    flex: 1,
-  },
-  probidhanItem: {
+    backgroundColor: "#b5ff00",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderRadius: 15,
-    backgroundColor: "#111",
-    borderLeftWidth: 4,
-    borderLeftColor: "white",
-    marginHorizontal: 8,
-    marginBottom: 10,
+    borderRadius: 8,
     shadowColor: "#b5ff00",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
-    shadowRadius: 8,
+    shadowRadius: 4,
     elevation: 5,
+    
+  },
+
+  probidhanItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    gap: 12,
+    backgroundColor: "rgba(181, 255, 0, 0.05)",
+    borderLeftWidth: 4,
+    borderLeftColor: "#b5ff00",
+    marginHorizontal: 6,
+    marginVertical: 4,
+    shadowColor: "#b5ff00",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 2,
+    overflow: "hidden",
   },
   probidhanText: {
     fontSize: 18,
@@ -384,17 +403,18 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   technologyItem: {
+    height: 55,
     marginHorizontal: 8,
     marginVertical: 4,
     borderRadius: 15,
-    backgroundColor: "#29490bff",
+    backgroundColor: "#111",
     borderLeftWidth: 4,
-    borderLeftColor: "white",
+    borderLeftColor: "#b5ff00",
     shadowColor: "#b5ff00",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 6,
+    elevation: 3,
     overflow: "hidden",
   },
   technologyTouchable: {

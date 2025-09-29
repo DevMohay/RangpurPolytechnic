@@ -139,6 +139,8 @@ export default function RoundedTabBar({ state, descriptors, navigation }) {
         bottom: 12 + insets.bottom,
         backgroundColor: '#111',
         borderRadius: 25,
+        borderWidth: 1,
+        borderColor: '#b5ff00',
         paddingVertical: 12,
         paddingHorizontal: 16,
         flexDirection: 'row',
@@ -205,7 +207,9 @@ export default function RoundedTabBar({ state, descriptors, navigation }) {
                 style={{
                   width: 60,
                   height: 60,
-                  backgroundColor: isFocused ? PRIMARY : '#f0f0f0',
+                  backgroundColor: isFocused ? PRIMARY : '#111',
+                  borderColor: isFocused ? '#111' : PRIMARY,
+                  borderWidth: 1,
                   justifyContent: 'center',
                   alignItems: 'center',
                   borderRadius: animatedBorderRadius || 15,
@@ -217,7 +221,7 @@ export default function RoundedTabBar({ state, descriptors, navigation }) {
                 }}
               >
                 <item.Icon 
-                  color={isFocused ? '#111' : '#111'} 
+                  color={isFocused ? '#111' : '#b5ff00'} 
                   size={isFocused ? 28 : 24} 
                 />
               </Animated.View>

@@ -162,7 +162,7 @@ export default function ResultsScreen() {
             onChangeText={setRoll}
           />
           <TouchableOpacity onPress={checkResult} style={styles.button}>
-            <Search size={20} color="#fff" />
+            <Search size={20} color="#111" />
             <ThemedText style={styles.buttonText}>Check Result</ThemedText>
           </TouchableOpacity>
 
@@ -262,7 +262,7 @@ export default function ResultsScreen() {
               onPress={takeScreenshot}
               style={[styles.button, { marginTop: 15 }]}
             >
-              <Save size={20} color="#fff" />
+              <Save size={20} color="#111" />
               <ThemedText style={styles.buttonText}>
                 Save Result Screenshot
               </ThemedText>
@@ -278,11 +278,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#b5ff00",
+    backgroundColor: "#111",
   },
   input: {
     borderWidth: 2,
-    borderColor: "white",
+    borderColor: "#b5ff00",
     padding: 10,
     marginBottom: 10,
     color: "#fff",
@@ -312,26 +312,30 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: "#111",
+    backgroundColor: "#b5ff00",
     padding: 12,
     borderRadius: 8,
     justifyContent: "center",
+    color: "#111",
   },
   buttonText: {
-    color: "#fff",
+    color: "#111",
     fontWeight: "bold",
     fontSize: 16,
   },
   resultBlock: {
     marginVertical: 10,
     padding: 10,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "#b5ff00",
     borderRadius: 8,
   },
   passText: {
     color: "#00e676",
     fontWeight: "bold",
     marginTop: 10,
+    backgroundColor: "#111",
+    padding: 10,
+    borderRadius: 8,
   },
   failedTitle: {
     fontWeight: "bold",
